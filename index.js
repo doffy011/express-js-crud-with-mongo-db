@@ -9,7 +9,6 @@ const productRoutes = require('./routes/product.routes')
 app.use(expresss.json());
 connectDB();
 
-//app.use(['/api/example_product', '/example_product'], productRoutes);
 app.use('/api/example_product', productRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
