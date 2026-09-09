@@ -1,0 +1,19 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Damion&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Poiret+One&family=Rampart+One&family=Righteous&display=swap');
+.container{
+    width: 35%;
+    height: 100vh;
+    margin: 0 auto;
+    padding: 20px;
+    /* background-color: #f1f1f1; */
+    font-family: "Google Sans", sans-serif;
+    border-radius: 13px;
+    background-image: url(../src/img/mockup-apple-iphone-17-2025-transparent.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
