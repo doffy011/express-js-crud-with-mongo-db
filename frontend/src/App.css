@@ -1,28 +1,41 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+:root { --ink: #1e2523; --muted: #707773; --paper: #f2efe8; --surface: #fbfaf6; --line: #dcdcd2; --accent: #e7674d; --accent-dark: #c84d38; --green: #4b806a; }
+.app-shell { min-height: 100vh; padding: 24px 16px 56px; background: radial-gradient(circle at 80% 0%, #f8d8c3 0, transparent 28rem), var(--paper); }
+.container { width: min(100%, 1040px); margin: 0 auto; }
+.app-header { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 18px; padding: 14px 0 56px; }
+.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--ink); border-radius: 50%; font-size: 1.6rem; line-height: 1; }
+.eyebrow { margin: 0 0 12px; color: var(--accent-dark); font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: .12em; }
+h1, h2 { margin: 0; color: var(--ink); font-weight: 800; letter-spacing: -.05em; line-height: .96; }
+h1 { font-size: clamp(2.6rem, 8vw, 5.8rem); }
+h2 { font-size: clamp(2rem, 5vw, 3.8rem); }
+h1 em, h2 em { color: var(--accent); font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: -.05em; }
+.header-note { padding-top: 8px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: .7rem; line-height: 1.6; text-align: right; text-transform: uppercase; }
+.todo-section { max-width: 760px; margin-left: auto; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.task-count { color: var(--muted); font-family: 'DM Mono', monospace; font-size: .75rem; text-transform: uppercase; }
+.task-form { display: flex; gap: 10px; margin: 28px 0 16px; }
+.task-input { min-width: 0; flex: 1; padding: 16px 18px; border: 1px solid var(--line); border-radius: 4px; outline: none; color: var(--ink); background: var(--surface); }
+.task-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px #e7674d22; }
+.task-input::placeholder { color: #9a9e96; }
+.add-button { min-height: 50px; padding: 0 20px; border: 0; border-radius: 4px; color: #fff; background: var(--ink); cursor: pointer; font-weight: 700; white-space: nowrap; transition: background .2s, transform .2s; }
+.add-button span { margin-right: 6px; font-size: 1.2rem; }
+.add-button:hover { background: var(--accent-dark); transform: translateY(-2px); }
+.todo-list { display: grid; gap: 10px; }
+.task-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 82px; padding: 16px 18px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 4px; background: var(--surface); box-shadow: 0 8px 20px #28302b08; }
+.task-card.is-complete { border-left-color: var(--green); background: #edf3ed; }
+.task-copy { display: grid; gap: 7px; min-width: 0; }
+.task-status { color: var(--accent-dark); font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .1em; }
+.is-complete .task-status { color: var(--green); }
+.task-text { overflow-wrap: anywhere; font-size: 1rem; font-weight: 600; }
+.is-complete .task-text { color: var(--green); text-decoration: line-through; text-decoration-thickness: 2px; }
+.task-actions { display: flex; flex-shrink: 0; gap: 8px; }
+.complete-button, .delete-button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid; border-radius: 50%; cursor: pointer; font-size: 1.15rem; transition: transform .2s, background .2s; }
+.complete-button { border-color: #a9c5b5; color: var(--green); background: #edf3ed; }
+.delete-button { border-color: #edb5a8; color: var(--accent-dark); background: #fff5f1; }
+.complete-button:hover, .delete-button:hover { transform: scale(1.08); }
+.state-message, .error-message { padding: 28px 0; color: var(--muted); font-family: 'DM Mono', monospace; font-size: .8rem; }
+.error-message { color: var(--accent-dark); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (min-width: 700px) { .app-shell { padding: 52px 32px 80px; } .app-header { padding-bottom: 100px; } .todo-section { padding-left: 12%; } }
+@media (max-width: 540px) { .app-header { grid-template-columns: auto 1fr; gap: 12px; padding-bottom: 54px; } .header-note { display: none; } .task-form { align-items: stretch; flex-direction: column; } .add-button { width: 100%; } .task-card { align-items: flex-start; } }
 
-@import url('https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Damion&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Poiret+One&family=Rampart+One&family=Righteous&display=swap');
-.container{
-    width: 35%;
-    height: 100vh;
-    margin: 0 auto;
-    padding: 20px;
-    /* background-color: #f1f1f1; */
-    font-family: "Google Sans", sans-serif;
-    border-radius: 13px;
-    background-image: url(../src/img/mockup-apple-iphone-17-2025-transparent.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-/* header{
-    padding: 20px;
-    margin-top: 50px;
-    margin-left: 20px; 
 
-} */
-
-
-    

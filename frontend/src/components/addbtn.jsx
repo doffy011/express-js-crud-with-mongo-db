@@ -3,12 +3,19 @@ import AnimatedCard from './AnimatedCard.jsx';
 export default function AddBtn() {
   const [todoList, setTodoList] = useState([]);
   const [newTask, setNewTask] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   useEffect(() => {
   const loadTodos = async () => {
-    const response = await fetch("http://localhost:3000/api/todos");
-    const todos = await response.json();
-
-    setTodoList(todos);
+    try {
+      const response = await fetch("http://localhost:3000/api/todos");
+      if (!response.ok) throw new Error('Could not load your tasks.');
+      setTodoList(await response.json());
+    } catch (loadError) {
+      setError(loadError.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   loadTodos();
@@ -22,64 +29,67 @@ export default function AddBtn() {
 
   if (!newTask.trim()) return;
 
-  const response = await fetch("http://localhost:3000/api/todos", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      text: newTask.trim(),
-      completed: false
-    })
-  });
-
-  const savedTodo = await response.json();
-
-  setTodoList([...todoList, savedTodo]);
-  setNewTask("");
+  try {
+    const response = await fetch("http://localhost:3000/api/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: newTask.trim(), completed: false })
+    });
+    if (!response.ok) throw new Error('Could not save that task.');
+    setTodoList([...todoList, await response.json()]);
+    setNewTask("");
+    setError('');
+  } catch (addError) {
+    setError(addError.message);
+  }
 };
   const deleteTask = async (taskId) => {
-  await fetch(`http://localhost:3000/api/todos/${taskId}`, {
-    method: "DELETE"
-  });
-
-  setTodoList(
-    todoList.filter((task) => task._id !== taskId)
-  );
+  try {
+    const response = await fetch(`http://localhost:3000/api/todos/${taskId}`, { method: "DELETE" });
+    if (!response.ok) throw new Error('Could not delete that task.');
+    setTodoList(todoList.filter((task) => task._id !== taskId));
+  } catch (deleteError) {
+    setError(deleteError.message);
+  }
 };
   const complete = async (taskId) => {
-  await fetch(`http://localhost:3000/api/todos/${taskId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      completed: true
-    })
-  });
-
-  setTodoList(
-    todoList.map((task) =>
-      task._id === taskId
-        ? { ...task, completed: true }
-        : task
-    )
-  );
+  try {
+    const response = await fetch(`http://localhost:3000/api/todos/${taskId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ completed: true })
+    });
+    if (!response.ok) throw new Error('Could not complete that task.');
+    setTodoList(todoList.map((task) => task._id === taskId ? { ...task, completed: true } : task));
+  } catch (completeError) {
+    setError(completeError.message);
+  }
 };
 
   return (
-    <>
-    <form  style={{ display: 'flex', gap: '8px', padding: '45px' , marginTop: '50px ' }}>
-      <input style={{border: 'none', padding: '12px', borderRadius: '12px', flex: 1 ,boxShadow: "0 4px 8px rgba(0,0,0,0.1)"}}
+    <section className="todo-section">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">YOUR LIST</p>
+          <h2>Make room<br /><em>for what matters.</em></h2>
+        </div>
+        <span className="task-count">{todoList.length} {todoList.length === 1 ? 'task' : 'tasks'}</span>
+      </div>
+    <form className="task-form">
+      <label className="sr-only" htmlFor="new-task">New task</label>
+      <input id="new-task" className="task-input"
         value={newTask}
         onChange={handlechange}
-        placeholder="Enter a new task"
+        placeholder="What needs your attention?"
       />
-      <button onClick={addTask} style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '12px', cursor: 'pointer' }}>
-        Add Task
+      <button className="add-button" onClick={addTask}>
+        <span aria-hidden="true">+</span> Add task
       </button>
     </form>
-    <div className="todo-list" style={{ marginTop: '20px', padding: '0 45px' }}>
+    {error && <p className="error-message" role="alert">{error}</p>}
+    <div className="todo-list">
+      {isLoading && <p className="state-message">Loading your tasks...</p>}
+      {!isLoading && !error && todoList.length === 0 && <p className="state-message">Your list is clear. Add one small thing to begin.</p>}
       {todoList.map((task) => (
   <AnimatedCard
     key={task._id}
@@ -90,7 +100,7 @@ export default function AddBtn() {
   />
 ))}
     </div>
-    </>    
+    </section>
   );
 }
 
