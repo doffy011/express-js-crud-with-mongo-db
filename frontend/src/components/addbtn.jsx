@@ -10,12 +10,17 @@ export default function AddBtn() {
   const addTask = (e) =>{
     e.preventDefault();
     if (!newTask.trim()) return;
-    const newTodoList = [...todoList, newTask.trim()];
+    const newTodoList = [...todoList, { text: newTask.trim(), completed: false }];
     setTodoList(newTodoList);
     setNewTask('');
   }
   const deleteTask = (taskIndex) => {
     setTodoList(todoList.filter((_, index) => index !== taskIndex));
+  }
+  const complete = (taskIndex) =>{
+    setTodoList(todoList.map((task, index) => (
+      index === taskIndex ? { ...task, completed: true } : task
+    )));
   }
 
   return (
@@ -33,9 +38,11 @@ export default function AddBtn() {
     <div className="todo-list" style={{ marginTop: '20px', padding: '0 45px' }}>
       {todoList.map((task, index) => (
         <AnimatedCard
-          key={`${task}-${index}`}
-          task={task}
+          key={`${task.text}-${index}`}
+          task={task.text}
+          completed={task.completed}
           onDelete={() => deleteTask(index)}
+          completedTask={() => complete(index)}
         />
       ))}
     </div>

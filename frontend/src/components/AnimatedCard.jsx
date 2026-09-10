@@ -1,7 +1,7 @@
 // src/components/AnimatedCard.jsx
 import { motion } from "framer-motion";
 
-function AnimatedCard({ task, onDelete }) {
+function AnimatedCard({ task, onDelete, completedTask, completed }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -17,7 +17,15 @@ function AnimatedCard({ task, onDelete }) {
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px" }}>
-        <span>{task}</span>
+        <span style={{ color: completed ? "green" : "inherit" }}>{task}</span>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button 
+         type="button"
+         onClick={completedTask}
+         style={{ backgroundColor: "#28a745", color: "#fff", border: "none", padding: "8px 12px", borderRadius: "50%", cursor: "pointer" }}
+        >
+          ✓
+        </button> 
         <button
           type="button"
           onClick={onDelete}
@@ -25,7 +33,8 @@ function AnimatedCard({ task, onDelete }) {
         >
           X
         </button>
-        
+        </div>
+
       </div>
     </motion.div>
   );
