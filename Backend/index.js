@@ -9,7 +9,7 @@ const connectDB = require('./config/db')
 const productRoutes = require('./routes/product.routes')
 
 app.use(expresss.json());
-app.use(cors({ origin: "https://your-frontend.onrender.com" }));
+app.use(cors({ origin: "*" }));
 connectDB();
 
 app.use("/api/todos", todoRoutes);
