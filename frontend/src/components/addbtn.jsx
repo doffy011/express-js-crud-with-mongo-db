@@ -1,27 +1,71 @@
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import AnimatedCard from './AnimatedCard.jsx';
 export default function AddBtn() {
   const [todoList, setTodoList] = useState([]);
   const [newTask, setNewTask] = useState('');
+  useEffect(() => {
+  const loadTodos = async () => {
+    const response = await fetch("http://localhost:3000/api/todos");
+    const todos = await response.json();
+
+    setTodoList(todos);
+  };
+
+  loadTodos();
+}, []);
 
   const handlechange = (e) => {
     setNewTask(e.target.value);
   }
-  const addTask = (e) =>{
-    e.preventDefault();
-    if (!newTask.trim()) return;
-    const newTodoList = [...todoList, { text: newTask.trim(), completed: false }];
-    setTodoList(newTodoList);
-    setNewTask('');
-  }
-  const deleteTask = (taskIndex) => {
-    setTodoList(todoList.filter((_, index) => index !== taskIndex));
-  }
-  const complete = (taskIndex) =>{
-    setTodoList(todoList.map((task, index) => (
-      index === taskIndex ? { ...task, completed: true } : task
-    )));
-  }
+  const addTask = async (e) => {
+  e.preventDefault();
+
+  if (!newTask.trim()) return;
+
+  const response = await fetch("http://localhost:3000/api/todos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      text: newTask.trim(),
+      completed: false
+    })
+  });
+
+  const savedTodo = await response.json();
+
+  setTodoList([...todoList, savedTodo]);
+  setNewTask("");
+};
+  const deleteTask = async (taskId) => {
+  await fetch(`http://localhost:3000/api/todos/${taskId}`, {
+    method: "DELETE"
+  });
+
+  setTodoList(
+    todoList.filter((task) => task._id !== taskId)
+  );
+};
+  const complete = async (taskId) => {
+  await fetch(`http://localhost:3000/api/todos/${taskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      completed: true
+    })
+  });
+
+  setTodoList(
+    todoList.map((task) =>
+      task._id === taskId
+        ? { ...task, completed: true }
+        : task
+    )
+  );
+};
 
   return (
     <>
@@ -36,15 +80,15 @@ export default function AddBtn() {
       </button>
     </form>
     <div className="todo-list" style={{ marginTop: '20px', padding: '0 45px' }}>
-      {todoList.map((task, index) => (
-        <AnimatedCard
-          key={`${task.text}-${index}`}
-          task={task.text}
-          completed={task.completed}
-          onDelete={() => deleteTask(index)}
-          completedTask={() => complete(index)}
-        />
-      ))}
+      {todoList.map((task) => (
+  <AnimatedCard
+    key={task._id}
+    task={task.text}
+    completed={task.completed}
+    onDelete={() => deleteTask(task._id)}
+    completedTask={() => complete(task._id)}
+  />
+))}
     </div>
     </>    
   );
