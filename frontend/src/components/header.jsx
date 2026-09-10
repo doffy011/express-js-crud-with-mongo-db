@@ -1,4 +1,4 @@
-import './header.css';
+import '../App.css';
 
 function Header() {
   return (
