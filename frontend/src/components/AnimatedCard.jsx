@@ -1,7 +1,7 @@
 // src/components/AnimatedCard.jsx
 import { motion } from "framer-motion";
 
-export default function AnimatedCard({ title, text }) {
+function AnimatedCard({ title, text }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -22,3 +22,4 @@ export default function AnimatedCard({ title, text }) {
     </motion.div>
   );
 }
+export default AnimatedCard;
