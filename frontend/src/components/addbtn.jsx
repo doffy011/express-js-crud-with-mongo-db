@@ -1,5 +1,8 @@
 import { useState , useEffect } from 'react';
 import AnimatedCard from './AnimatedCard.jsx';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export default function AddBtn() {
   const [todoList, setTodoList] = useState([]);
   const [newTask, setNewTask] = useState('');
@@ -8,7 +11,7 @@ export default function AddBtn() {
   useEffect(() => {
   const loadTodos = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/todos");
+      const response = await fetch(`${API_URL}/api/todos`);
       if (!response.ok) throw new Error('Could not load your tasks.');
       setTodoList(await response.json());
     } catch (loadError) {
@@ -30,7 +33,7 @@ export default function AddBtn() {
   if (!newTask.trim()) return;
 
   try {
-    const response = await fetch("http://localhost:3000/api/todos", {
+    const response = await fetch(`${API_URL}/api/todos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: newTask.trim(), completed: false })
@@ -45,7 +48,7 @@ export default function AddBtn() {
 };
   const deleteTask = async (taskId) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/todos/${taskId}`, { method: "DELETE" });
+    const response = await fetch(`${API_URL}/api/todos/${taskId}`, { method: "DELETE" });
     if (!response.ok) throw new Error('Could not delete that task.');
     setTodoList(todoList.filter((task) => task._id !== taskId));
   } catch (deleteError) {
@@ -54,7 +57,7 @@ export default function AddBtn() {
 };
   const complete = async (taskId) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/todos/${taskId}`, {
+    const response = await fetch(`${API_URL}/api/todos/${taskId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ completed: true })
