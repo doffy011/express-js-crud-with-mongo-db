@@ -1,7 +1,9 @@
 import { useState , useEffect } from 'react';
 import AnimatedCard from './AnimatedCard.jsx';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ||
+  (import.meta.env.DEV ? 'http://localhost:3000' : '');
+const API_CONFIG_ERROR = 'VITE_API_URL is not configured on the frontend.';
 
 export default function AddBtn() {
   const [todoList, setTodoList] = useState([]);
@@ -10,6 +12,12 @@ export default function AddBtn() {
   const [error, setError] = useState('');
   useEffect(() => {
   const loadTodos = async () => {
+    if (!API_URL) {
+      setError(API_CONFIG_ERROR);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/api/todos`);
       if (!response.ok) throw new Error('Could not load your tasks.');
@@ -31,6 +39,10 @@ export default function AddBtn() {
   e.preventDefault();
 
   if (!newTask.trim()) return;
+  if (!API_URL) {
+    setError(API_CONFIG_ERROR);
+    return;
+  }
 
   try {
     const response = await fetch(`${API_URL}/api/todos`, {
@@ -47,6 +59,11 @@ export default function AddBtn() {
   }
 };
   const deleteTask = async (taskId) => {
+  if (!API_URL) {
+    setError(API_CONFIG_ERROR);
+    return;
+  }
+
   try {
     const response = await fetch(`${API_URL}/api/todos/${taskId}`, { method: "DELETE" });
     if (!response.ok) throw new Error('Could not delete that task.');
@@ -56,6 +73,11 @@ export default function AddBtn() {
   }
 };
   const complete = async (taskId) => {
+  if (!API_URL) {
+    setError(API_CONFIG_ERROR);
+    return;
+  }
+
   try {
     const response = await fetch(`${API_URL}/api/todos/${taskId}`, {
       method: "PUT",
